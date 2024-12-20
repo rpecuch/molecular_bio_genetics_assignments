@@ -1,0 +1,80 @@
+---
+title: "RBIF102 Week 4 Homework"
+author: "Rita Pecuch"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Q1: What is the sequence of the most common read in the library?
+
+By executing the below code block, we can see that the most common read in the library of diabetic cell chromosome 22 reads is TCGCCTTAATACTTTTTTATTTTGTTTTATTTTGAA.
+
+```{r q1, message=FALSE, warning=FALSE}
+library(ShortRead)
+
+# Read chromosome 22 reads from diabetic cells
+dia <- readFasta("/Users/ritapecuch/Downloads/dia_ch22.fasta")
+dia <- sread(dia)
+# Print out 10 most common reads and their frequencies
+dia.tables <- tables(dia, n=10)
+dia.tables$top
+```
+
+## Question 2
+
+Q2: What base is most common in the first position of each read? 
+
+By executing the below line of code, we can see that the base that is the most common in the first position of each read is cytosine (C).
+
+```{r q2, warning=FALSE}
+# Look at base composition of reads
+alphabetByCycle(dia)
+```
+
+## Question 3
+
+Q3: What percentage of the reads from each library map one time using the --local option?
+
+By executing the command shown in the below screenshot, we can see that 28.70% of the chromosome 22 reads from diabetic cells aligned exactly one time.
+
+![Alignment of chromosome 22 reads from diabetic cells](/Users/ritapecuch/Desktop/dia_align.png)
+
+
+By executing the command shown in the below screenshot, we can see that 33.68% of the chromosome 22 reads from CRISPR corrected cells aligned exactly one time.
+
+![Alignment of chromosome 22 reads from CRISPR-corrected cells](/Users/ritapecuch/Desktop/corr_align.png)
+
+## Question 4
+
+Q4: In the region of chromosome we looked at, what genes are represented? Which is more highly
+expressed?
+
+In the chr22:35,243,570-35,380,115 region, the two genes represented are TOM1 and HMGXB4. 
+
+![Genes represented in chr22:35,243,570-35,380,115 region](/Users/ritapecuch/Desktop/igv_snapshot.png)
+
+
+As shown in the below screenshots, a greater number of reads were mapped to the TOM1 gene, which means that it was more highly expressed than HMGXB4.
+
+![TOM1 screenshot #1](/Users/ritapecuch/Desktop/igv_TOM1_1.png)
+![TOM1 screenshot #2](/Users/ritapecuch/Desktop/igv_TOM1_2.png)
+ 
+![TOM1 screenshot #3](/Users/ritapecuch/Desktop/igv_TOM1_3.png)
+  
+![TOM1 screenshot #4](/Users/ritapecuch/Desktop/igv_TOM1_4.png)
+   
+![TOM1 screenshot #5](/Users/ritapecuch/Desktop/igv_TOM1_5.png)
+    
+![TOM1 screenshot #6](/Users/ritapecuch/Desktop/igv_TOM1_6.png)
+     
+![TOM1 screenshot #7](/Users/ritapecuch/Desktop/igv_TOM1_7.png)
+
+![HMGXB4 screenshot #1](/Users/ritapecuch/Desktop/igv_HMGXB4_1.png)
+
+![HMGXB4 screenshot #2](/Users/ritapecuch/Desktop/igv_HMGXB4_2.png)
