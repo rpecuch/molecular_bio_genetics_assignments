@@ -1,0 +1,143 @@
+---
+title: "RBIF102 Week 8 Homework"
+author: "Rita Pecuch"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+When using the genus level aggregation, what is the most common taxon in the BK
+condition? When using the phylum level, which mouse had the highest % of Bacteroidetes? 
+
+As shown in the below plot at the genus level aggregation, the most common taxon in the BK condition is Prevotella at 22.746%. As shown in the below plot at the phylum level aggregation, the mouse with the highest percentage of Bacteroidetes is PM7 at 54.984%.
+
+```{r q1, warning=FALSE, message=FALSE}
+library(microbiomeExplorer)
+data("mouseData", package = "metagenomeSeq")
+meData <- filterMEData(mouseData,minpresence = 1, minfeats = 2, minreads = 2)
+
+# Plot number of features versus number of reads, colored by diet
+makeQCPlot(meData, col_by = "diet",
+       log = "none",
+       filter_feat = 101,
+       filter_read = 511,
+       allowWebGL = FALSE)
+
+# Plot number of features, colored by diet
+plotlySampleBarplot(meData,
+                    col_by = "diet")
+
+# Filter for only samples with minimum 100 features and minimum 500 reads
+meData <- filterMEData(mouseData,minpresence = 1, minfeats = 100, minreads = 500)
+
+# Normalize
+meData <- normalizeData(meData,norm_method = "Proportion")
+
+# Aggregate by genus
+aggDat <- aggFeatures(meData, level = "genus")
+# Graph relative abundance
+plotAbundance(aggDat,
+              level = "genus",
+              x_var = "diet",
+              facet1 = NULL,
+              facet2 = NULL,
+              ind = 1:10,
+              plotTitle = "Top 10 feature percentage at genus level",
+              ylab = "Percentage")
+
+# Aggregate by phylum
+aggDat <- aggFeatures(meData, level = "phylum")
+# Graph relative abundance
+plotAbundance(aggDat,
+              level = "phylum",
+              x_var = "mouseID",
+              facet1 = NULL,
+              facet2 = NULL,
+              ind = 1:10,
+              plotTitle = "Top 10 feature percentage at phylum level",
+              ylab = "Percentage")
+```
+
+## Question 2
+
+Which diet led to a higher diversity index? 
+
+As shown in the below plot, the BK diet led to a higher average Shannon diversity index. There were some Western diet mouse samples with a higher diversity index than some of the BK diet mouse samples, but the average diversity index was higher among the BK diet mice than the Western diet mice.
+
+```{r q2, warning=FALSE}
+# Plot alpha diversity at phylum level
+plotAlpha(aggDat,
+          level = "phylum",
+          index = "shannon",
+          x_var = "diet",
+          facet1 = NULL,
+          facet2 = NULL,
+          col_by = "mouseID",
+          plotTitle = "Shannon diversity index at phylum level")
+```
+
+## Question 3
+
+Based on the plots of alpha diversity and the heatmap, which factor do you think has more
+influence on the microbiome in these individuals, sex or age?
+
+Based on the alpha diversity plots of the otu data aggregated by phylum, there is significant overlap between the distributions of Shannon diversity indices when comparing by sex and no overlap between the distributions of diversity indices when comparing by age. Based on the heatmaps of the otu data aggregated by genus, there appears to be more similarity between abundances of genera among different sexes than different ages. Therefore, age appears to have more of an influence on the microbiome of these individuals than sex.
+
+```{r q3, warning=FALSE, message=FALSE}
+# Read data
+otu_path <- "/Users/ritapecuch/Desktop/Brandeis/RBIF102/Homework 8/otu.rds"
+otu <- readData(otu_path, type="RDS")
+
+# Filter for only samples with minimum 100 features and minimum 500 reads
+otu <- filterMEData(otu,minpresence = 1, minfeats = 100, minreads = 500)
+
+# Normalize
+otu <- normalizeData(otu,norm_method = "Proportion")
+
+# Aggregate by phylum
+otu_phylum <- aggFeatures(otu, level = "phylum")
+# Plot alpha diversity by sex
+plotAlpha(otu_phylum,
+          level = "phylum",
+          index = "shannon",
+          x_var = "sex",
+          facet1 = NULL,
+          facet2 = NULL,
+          col_by = "Subject_ID",
+          plotTitle = "Shannon diversity index at phylum level by sex")
+# Plot alpha diversity by age
+plotAlpha(otu_phylum,
+          level = "phylum",
+          index = "shannon",
+          x_var = "age",
+          facet1 = NULL,
+          facet2 = NULL,
+          col_by = "Subject_ID",
+          plotTitle = "Shannon diversity index at phylum level by age")
+
+# Aggregate by genus
+otu_genus <- aggFeatures(otu, level = "genus")
+# Plot heatmap by sex
+plotHeatmap(otu_genus,
+            features = NULL,
+            log = TRUE,
+            sort_by = "Variance",
+            nfeat = 50,
+            col_by = c("sex"),
+            row_by = "",
+            plotTitle = "Top 50 features sorted by Variance at genus level by sex")
+# Plot heatmap by age
+plotHeatmap(otu_genus,
+            features = NULL,
+            log = TRUE,
+            sort_by = "Variance",
+            nfeat = 50,
+            col_by = c("age"),
+            row_by = "",
+            plotTitle = "Top 50 features sorted by Variance at genus level by age")
+```
